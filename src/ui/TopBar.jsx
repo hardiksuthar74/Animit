@@ -33,7 +33,6 @@ const TopBar = () => {
 
 const StyledTopBar = styled.header`
   position: fixed;
-  background-color: aqua;
   height: 8rem;
   top: 0;
   left: 0;

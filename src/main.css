@@ -1,0 +1,45 @@
+.swiper-button-prev,
+.swiper-button-next {
+  background: rgba(255, 255, 255, 0.1);
+  color: #151515 !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 1rem;
+  transition: all 0.3s ease-in;
+}
+
+.swiper-button-prev {
+  position: absolute;
+  height: 38% !important;
+  bottom: 7.6rem !important;
+  top: auto !important;
+  left: auto !important;
+  right: -6rem !important;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  outline: 0;
+  box-shadow: none;
+}
+
+.swiper-button-next {
+  position: absolute;
+  height: 38% !important;
+  top: 2.8rem !important;
+  left: auto !important;
+  right: -6rem !important;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  outline: 0;
+  box-shadow: none;
+}
+
+.swiper {
+  position: static !important;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: #cf9fff;
+}
