@@ -1,13 +1,15 @@
 import AnimeCarousel from "../ui/AnimeCarousel";
-import "../main.css";
 import TrendingAnime from "../ui/TrendingAnime";
+import TopAnimesByCategory from "../ui/TopAnimesByCategory";
+import "../main.css";
 
 const Home = () => {
   return (
-    <div>
+    <main>
       <AnimeCarousel />
       <TrendingAnime />
-    </div>
+      <TopAnimesByCategory />
+    </main>
   );
 };
 

@@ -2,32 +2,63 @@ import styled from "styled-components";
 import { FaBars } from "react-icons/fa6";
 import AnimeLogo from "../assets/logo.png";
 import ProfileLogo from "../assets/profile.jpg";
+import { useNavigate } from "react-router-dom";
+import SideBar from "./SideBar";
+import SideBarModal from "./SideBarModal";
+import Modal from "./Modal";
+import Authentication from "./Authentication";
 
 const TopBar = () => {
+  const navigate = useNavigate();
+
+  const NavigateToHome = () => {
+    navigate("/");
+  };
+
+  const navigateToUser = () => {
+    navigate("/user/watchlist");
+  };
+
   return (
-    <StyledTopBar>
-      <Container>
-        <TopBarNavsContainer>
-          <LeftSideNavBar>
-            <HamBurgerMenu>
-              <FaBars />
-            </HamBurgerMenu>
-            <AnimitLogo>
-              <Image src={AnimeLogo} />
-            </AnimitLogo>
-            <StyledSearchBar>
-              <SearchBarInput placeholder="Search Anime" />
-            </StyledSearchBar>
-          </LeftSideNavBar>
-          <RightSideNavBar>
-            <StyledUserAvatar>
-              <Avatar src={ProfileLogo} /> ||
-              <StyledLogInButton>Login</StyledLogInButton>
-            </StyledUserAvatar>
-          </RightSideNavBar>
-        </TopBarNavsContainer>
-      </Container>
-    </StyledTopBar>
+    <>
+      <StyledTopBar>
+        <Container>
+          <TopBarNavsContainer>
+            <LeftSideNavBar>
+              <SideBarModal>
+                <SideBarModal.Open opens="anime-form">
+                  <HamBurgerMenu>
+                    <FaBars />
+                  </HamBurgerMenu>
+                </SideBarModal.Open>
+                <SideBarModal.Window name="anime-form">
+                  <SideBar />
+                </SideBarModal.Window>
+              </SideBarModal>
+              <AnimitLogo onClick={NavigateToHome}>
+                <Image src={AnimeLogo} />
+              </AnimitLogo>
+              <StyledSearchBar>
+                <SearchBarInput placeholder="Search Anime" />
+              </StyledSearchBar>
+            </LeftSideNavBar>
+            <RightSideNavBar>
+              <StyledUserAvatar>
+                <Avatar onClick={navigateToUser} src={ProfileLogo} /> ||
+                <Modal>
+                  <Modal.Open opens="login">
+                    <StyledLogInButton>Login</StyledLogInButton>
+                  </Modal.Open>
+                  <Modal.Window name="login">
+                    <Authentication />
+                  </Modal.Window>
+                </Modal>
+              </StyledUserAvatar>
+            </RightSideNavBar>
+          </TopBarNavsContainer>
+        </Container>
+      </StyledTopBar>
+    </>
   );
 };
 

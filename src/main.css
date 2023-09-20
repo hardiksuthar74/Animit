@@ -1,5 +1,5 @@
-.swiper-button-prev,
-.swiper-button-next {
+#trendingAnimeId .swiper-button-prev,
+#trendingAnimeId .swiper-button-next {
   background: rgba(255, 255, 255, 0.1);
   color: #151515 !important;
   width: 50px !important;
@@ -8,7 +8,7 @@
   transition: all 0.3s ease-in;
 }
 
-.swiper-button-prev {
+#trendingAnimeId .swiper-button-prev {
   position: absolute;
   height: 38% !important;
   bottom: 7.6rem !important;
@@ -22,7 +22,7 @@
   box-shadow: none;
 }
 
-.swiper-button-next {
+#trendingAnimeId .swiper-button-next {
   position: absolute;
   height: 38% !important;
   top: 2.8rem !important;
@@ -35,11 +35,62 @@
   box-shadow: none;
 }
 
-.swiper {
+#trendingAnimeId .swiper {
   position: static !important;
 }
 
-.swiper-button-prev:hover,
-.swiper-button-next:hover {
+#trendingAnimeId .swiper-button-prev:hover,
+#trendingAnimeId .swiper-button-next:hover {
   background-color: #cf9fff;
+}
+
+#main-carousel .swiper-button-prev,
+#main-carousel .swiper-button-next {
+  background: rgba(255, 255, 255, 0.1);
+  color: #151515 !important;
+  width: 50px !important;
+  height: 80px !important;
+  border-radius: 1rem;
+  transition: all 0.3s ease-in;
+}
+
+#main-carousel .swiper-button-prev {
+  position: absolute;
+  height: 8% !important;
+  top: auto !important;
+  left: auto !important;
+  right: 2rem !important;
+  bottom: 4rem !important;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  outline: 0;
+  box-shadow: none;
+}
+
+#main-carousel .swiper-button-next {
+  position: absolute;
+  height: 8% !important;
+  top: auto !important;
+  left: auto !important;
+  right: 2rem !important;
+  bottom: 10rem !important;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  outline: 0;
+  box-shadow: none;
+}
+
+#main-carousel .swiper {
+  position: static !important;
+}
+
+#main-carousel .swiper-button-prev:hover,
+#main-carousel .swiper-button-next:hover {
+  background-color: #cf9fff;
+}
+
+#main-carousel {
+  position: relative;
 }

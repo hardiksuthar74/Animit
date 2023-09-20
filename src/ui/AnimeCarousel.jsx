@@ -1,94 +1,87 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { FaAngleRight, FaPlay, FaPlus, FaRegCalendar } from "react-icons/fa";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
 
+import "swiper/css";
+import "swiper/css/navigation";
+import { useSpotlightAnime } from "../features/anime/useSpotlightAnime";
+import Spinner from "./Spinner";
+import { useNavigate } from "react-router-dom";
 const AnimeCarousel = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const [items, setItems] = useState([]);
-
-  const animeData = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:5000/animes/spotlight");
-      const data = await response.json();
-
-      setItems(data?.data);
-    } catch (err) {
-      console.log(err);
-    }
+  const { isLoading, animes } = useSpotlightAnime();
+  const navigate = useNavigate();
+  const navigateToAnime = (id) => {
+    navigate(`/anime/${id}`);
   };
 
-  useEffect(() => {
-    animeData();
-  }, []);
-
-  const updateIndex = (newIndex) => {
-    if (newIndex < 0) {
-      newIndex = 0;
-    } else if (newIndex >= items.length) {
-      newIndex = items.length - 1;
-    }
-
-    setActiveIndex(newIndex);
-  };
+  if (isLoading)
+    return (
+      <SpinnerContainer>
+        <Spinner />
+      </SpinnerContainer>
+    );
 
   return (
-    <StyledAnimeCarousel>
-      <AnimeCarouselDetail>
-        <Spotlight>#{items[activeIndex]?.rank} Spotlight</Spotlight>
-        <AnimeTitle>{items[activeIndex]?.title}</AnimeTitle>
-        <AnimeTypeDetails>
-          <AnimeTypePara>
-            <FaPlay />
-            {items[activeIndex]?.type}
-          </AnimeTypePara>
-          <AnimeTypePara>
-            <FaRegCalendar />
-            {items[activeIndex]?.year}
-          </AnimeTypePara>
-          <AnimeTypeHd>HD</AnimeTypeHd>
-        </AnimeTypeDetails>
+    <div id="main-carousel">
+      <Swiper navigation={true} modules={[Navigation]}>
+        {animes.map((anime, index) => {
+          return (
+            <SwiperSlide key={index}>
+              <StyledAnimeCarousel>
+                <AnimeCarouselDetail>
+                  <Spotlight>#{anime.rank} Spotlight</Spotlight>
+                  <AnimeTitle>{anime.title}</AnimeTitle>
+                  <AnimeTypeDetails>
+                    <AnimeTypePara>
+                      <FaPlay />
+                      {anime.type}
+                    </AnimeTypePara>
+                    <AnimeTypePara>
+                      <FaRegCalendar />
+                      {anime.year}
+                    </AnimeTypePara>
+                    <AnimeTypeHd>HD</AnimeTypeHd>
+                  </AnimeTypeDetails>
 
-        <AnimeSynopsis>
-          {items[activeIndex]?.synopsis.slice(0, 300)}......
-        </AnimeSynopsis>
+                  <AnimeSynopsis>
+                    {anime.synopsis.slice(0, 300)}......
+                  </AnimeSynopsis>
 
-        <AnimeActionContainer>
-          <AnimeActionButton>
-            <FaPlus />
-            Add
-          </AnimeActionButton>
-          <AnimeActionButton>
-            Detail
-            <FaAngleRight />
-          </AnimeActionButton>
-        </AnimeActionContainer>
-      </AnimeCarouselDetail>
-      <AnimeCarouselImageContainer>
-        <AnimeCarouselImage
-          src={`http://127.0.0.1:5000/animebg/${items[activeIndex]?.coverImage}`}
-        />
-      </AnimeCarouselImageContainer>
-      <CarouselButtonContainer>
-        <CarouselButtonSub
-          onClick={() => {
-            updateIndex(activeIndex - 1);
-          }}
-        >
-          {"<"}
-        </CarouselButtonSub>
-        <CarouselButtonAdd
-          onClick={() => {
-            updateIndex(activeIndex + 1);
-          }}
-        >
-          {">"}
-        </CarouselButtonAdd>
-      </CarouselButtonContainer>
-    </StyledAnimeCarousel>
+                  <AnimeActionContainer>
+                    <AnimeActionButton>
+                      <FaPlus />
+                      Add
+                    </AnimeActionButton>
+                    <AnimeActionButton
+                      onClick={() => navigateToAnime(anime.jikanAnimeId)}
+                    >
+                      Detail
+                      <FaAngleRight />
+                    </AnimeActionButton>
+                  </AnimeActionContainer>
+                </AnimeCarouselDetail>
+                <AnimeCarouselImageContainer>
+                  <AnimeCarouselImage
+                    src={`http://127.0.0.1:5000/animebg/${anime.coverImage}`}
+                  />
+                </AnimeCarouselImageContainer>
+              </StyledAnimeCarousel>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
+    </div>
   );
 };
+
+const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+`;
 
 const StyledAnimeCarousel = styled.div`
   display: grid;
@@ -144,30 +137,6 @@ const AnimeSynopsis = styled.div`
   height: 10rem;
 `;
 
-const CarouselButtonContainer = styled.div`
-  > button {
-    color: black;
-    background-color: #cf9fff;
-    position: absolute;
-    right: 1rem;
-    border-radius: 7px;
-    border: 1px;
-    font-size: 2rem;
-    width: 4rem;
-    height: 4rem;
-  }
-`;
-
-const CarouselButtonAdd = styled.button`
-  top: 49rem;
-  z-index: 22;
-`;
-
-const CarouselButtonSub = styled.button`
-  top: 54rem;
-  z-index: 22;
-`;
-
 const AnimeCarouselImageContainer = styled.div`
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
@@ -190,7 +159,6 @@ const AnimeCarouselImageContainer = styled.div`
   z-index: -11;
 `;
 const AnimeCarouselImage = styled.img`
-  position: relative;
   filter: blur(1px);
   width: 100%;
   height: 100%;

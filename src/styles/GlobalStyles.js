@@ -4,6 +4,7 @@ const GlobalStyles = createGlobalStyle`
 :root {
   &, &.light-mode {
   /* Grey */
+  --color-font: #cf9fff;
   --color-grey-0: #fff;
   --color-grey-50: #f9fafb;
   --color-grey-100: #f3f4f6;

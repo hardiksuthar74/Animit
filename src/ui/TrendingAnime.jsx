@@ -27,7 +27,7 @@ const TrendingAnime = () => {
   return (
     <>
       <Trending>Trending</Trending>
-      <TrendingAnimeFlex>
+      <TrendingAnimeFlex id="trendingAnimeId">
         <Swiper
           navigation={true}
           modules={[Navigation]}
@@ -53,13 +53,15 @@ const TrendingAnime = () => {
 };
 
 const Trending = styled.p`
+  margin-top: 6rem;
   margin-left: 2rem;
   font-size: 2.4rem;
   color: #cf9fff;
 `;
 
 const TrendingAnimeFlex = styled.div`
-  max-width: 144rem;
+  margin-left: 4rem;
+  max-width: 140rem;
   position: relative;
 `;
 
