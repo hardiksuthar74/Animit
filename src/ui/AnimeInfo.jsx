@@ -3,6 +3,7 @@ import Spinner from "./Spinner";
 import { FaPlay, FaPlus, FaRegCalendar } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSingleAnime } from "../features/anime/useSingleAnime";
+import AddAnime from "./addAnime";
 
 const AnimeInfo = () => {
   const { animeId } = useParams();
@@ -39,10 +40,7 @@ const AnimeInfo = () => {
           </AnimeTypeDetails>
 
           <AnimeActionContainer>
-            <AnimeActionButton>
-              <FaPlus />
-              Add
-            </AnimeActionButton>
+            <AddAnime animeId={anime.mal_id} />
           </AnimeActionContainer>
           <AnimeSynopsis>{anime.synopsis}......</AnimeSynopsis>
           <p>Animit is the best site to track {anime.title} online</p>

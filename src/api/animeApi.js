@@ -21,3 +21,15 @@ export const fetchSingleAnimeMethod = async (id) => {
     throw new Error("Something went wrong!");
   }
 };
+
+export const fetchSearchAnime = async (search) => {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5000/animes/?limit=5&q=${search}`
+    );
+    const data = await response.json();
+    return data?.data;
+  } catch (err) {
+    throw new Error("Something went wrong!");
+  }
+};

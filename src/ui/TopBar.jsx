@@ -2,22 +2,75 @@ import styled from "styled-components";
 import { FaBars } from "react-icons/fa6";
 import AnimeLogo from "../assets/logo.png";
 import ProfileLogo from "../assets/profile.jpg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SideBar from "./SideBar";
 import SideBarModal from "./SideBarModal";
 import Modal from "./Modal";
 import Authentication from "./Authentication";
+import { useUser } from "../features/users/useUser";
+import Menus from "./Menus";
+import { useEffect, useRef, useState } from "react";
+import useDebounce from "../hooks/useDebounce";
+import { useSearchAnime } from "../features/anime/useSearchAnime";
+import Spinner from "./Spinner";
 
 const TopBar = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [data, setData] = useState(false);
   const navigate = useNavigate();
+  const { user } = useUser();
+  const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+  const { isSearching, searchAnime, anime } = useSearchAnime();
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      searchAnime(debouncedSearchTerm);
+      setData(true);
+    }
+  }, [debouncedSearchTerm]);
+
+  const changeHandler = (e) => {
+    if (e.target.value.length === 0) {
+      setData(false);
+      setSearchTerm("");
+    }
+    setSearchTerm(e.target.value);
+  };
 
   const NavigateToHome = () => {
     navigate("/");
   };
 
-  const navigateToUser = () => {
-    navigate("/user/watchlist");
+  const NavigateToAnime = (id) => {
+    navigate(`/anime/${id}`);
+    setData(false);
+    setSearchTerm("");
   };
+  const logout = () => {
+    sessionStorage.clear();
+    location.replace("/");
+  };
+
+  const useOutsideClick = (listeningCapturing = true) => {
+    const ref = useRef();
+
+    useEffect(() => {
+      const handleClick = (e) => {
+        if (ref.current && !ref.current.contains(e.target)) {
+          setData(false);
+          setSearchTerm("");
+        }
+      };
+      document.addEventListener("click", handleClick, listeningCapturing);
+
+      return () =>
+        document.removeEventListener("click", handleClick, listeningCapturing);
+    }, [listeningCapturing]);
+
+    return ref;
+  };
+
+  const ref = useOutsideClick();
 
   return (
     <>
@@ -39,20 +92,63 @@ const TopBar = () => {
                 <Image src={AnimeLogo} />
               </AnimitLogo>
               <StyledSearchBar>
-                <SearchBarInput placeholder="Search Anime" />
+                <SearchBarInput
+                  onChange={changeHandler}
+                  placeholder="Search Anime"
+                  value={searchTerm}
+                />
+                <SearchedAnimeList ref={ref}>
+                  {isSearching && <Spinner />}
+                  {data &&
+                    anime?.map((a, index) => {
+                      return (
+                        <SearchedAnime
+                          onClick={() => NavigateToAnime(a.mal_id)}
+                          key={index}
+                        >
+                          <div>
+                            <img src={a?.image} />
+                          </div>
+                          <div>{a.title}</div>
+                        </SearchedAnime>
+                      );
+                    })}
+                </SearchedAnimeList>
               </StyledSearchBar>
             </LeftSideNavBar>
             <RightSideNavBar>
               <StyledUserAvatar>
-                <Avatar onClick={navigateToUser} src={ProfileLogo} /> ||
-                <Modal>
-                  <Modal.Open opens="login">
-                    <StyledLogInButton>Login</StyledLogInButton>
-                  </Modal.Open>
-                  <Modal.Window name="login">
-                    <Authentication />
-                  </Modal.Window>
-                </Modal>
+                {user && (
+                  <Menus>
+                    <Menus.Toggle id={1}>
+                      <Avatar src={ProfileLogo} />
+                    </Menus.Toggle>
+                    <Menus.List id={1}>
+                      <Menus.Button>
+                        <Link to={"/user/profile"}>Profile</Link>
+                      </Menus.Button>
+                      <Menus.Button>
+                        <Link to={"/user/watchlist"}>Watchlist</Link>
+                      </Menus.Button>
+                      <Menus.Button>
+                        <Link to={"/user/notification"}>Notification</Link>
+                      </Menus.Button>
+                      <Menus.Button>
+                        <div onClick={logout}>Logout</div>
+                      </Menus.Button>
+                    </Menus.List>
+                  </Menus>
+                )}
+                {!user && (
+                  <Modal>
+                    <Modal.Open opens="login">
+                      <StyledLogInButton>Login</StyledLogInButton>
+                    </Modal.Open>
+                    <Modal.Window name="login">
+                      <Authentication />
+                    </Modal.Window>
+                  </Modal>
+                )}
               </StyledUserAvatar>
             </RightSideNavBar>
           </TopBarNavsContainer>
@@ -109,7 +205,9 @@ const Image = styled.img`
   width: 100%;
 `;
 
-const StyledSearchBar = styled.div``;
+const StyledSearchBar = styled.div`
+  position: relative;
+`;
 
 const SearchBarInput = styled.input`
   height: 3rem;
@@ -157,6 +255,28 @@ const StyledLogInButton = styled.button`
   border: 1px;
   border-radius: 0.5rem;
   transition: all 0.3s ease-in;
+`;
+
+const SearchedAnime = styled.div`
+  cursor: pointer;
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  color: #fff;
+  column-gap: 2rem;
+  border-bottom: 1px dashed #151515;
+  align-items: center;
+  > div > img {
+    width: 40px;
+  }
+`;
+
+const SearchedAnimeList = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: #414248;
+  width: 100%;
 `;
 
 export default TopBar;

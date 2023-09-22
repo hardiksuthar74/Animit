@@ -1,10 +1,10 @@
 import { FaHeart, FaPlus } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { useSpotlightAnime } from "../features/anime/useSpotlightAnime";
 import Spinner from "./Spinner";
 import Modal from "./Modal";
 import AnimeAction from "./AnimeAction";
+import { useUser } from "../features/users/useUser";
 
 const Watchlist = () => {
   const location = useLocation();
@@ -12,9 +12,13 @@ const Watchlist = () => {
 
   const type = searchParams.get("type");
 
-  const { isLoading, animes } = useSpotlightAnime();
+  const { isLoading, user } = useUser();
 
   if (isLoading) return <Spinner />;
+
+  let animeDataToShow = !type
+    ? user.data.animeData
+    : user.data.animeData.filter((anime) => anime.userAnimeStatus == type);
 
   return (
     <div>
@@ -40,26 +44,29 @@ const Watchlist = () => {
         </Filter>
       </AnimeFilter>
       <AnimeList>
-        {animes.map((anime) => {
+        {animeDataToShow.map((anime) => {
           return (
             <Anime key={anime.id}>
               <AnimeImageContainer>
                 <AnimeImage src={anime.image} />
               </AnimeImageContainer>
               <AnimeTitle>{anime.title}</AnimeTitle>
-              <EpisodeAction>
-                <AnimeEpisodes>
-                  Episode: {anime.episodes ? anime.episodes : 0}
-                </AnimeEpisodes>
-                <Modal>
-                  <Modal.Open opens="addForm">
-                    <FaPlus className="pointer" />
-                  </Modal.Open>
-                  <Modal.Window name="addForm">
-                    <AnimeAction anime={anime} />
-                  </Modal.Window>
-                </Modal>
-              </EpisodeAction>
+              {anime.userAnimeStatus !== 4 && (
+                <EpisodeAction>
+                  <AnimeEpisodes>Episode: {anime.userEpisode}</AnimeEpisodes>
+                  <Modal>
+                    <Modal.Open opens="addForm">
+                      <FaPlus className="pointer" />
+                    </Modal.Open>
+                    <Modal.Window name="addForm">
+                      <AnimeAction anime={anime} />
+                    </Modal.Window>
+                  </Modal>
+                </EpisodeAction>
+              )}
+              {anime.userAnimeStatus === 4 && (
+                <EpisodeAction>Completed</EpisodeAction>
+              )}
             </Anime>
           );
         })}

@@ -9,6 +9,7 @@ import "swiper/css/navigation";
 import { useSpotlightAnime } from "../features/anime/useSpotlightAnime";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
+import AddAnime from "./addAnime";
 const AnimeCarousel = () => {
   const { isLoading, animes } = useSpotlightAnime();
   const navigate = useNavigate();
@@ -50,10 +51,7 @@ const AnimeCarousel = () => {
                   </AnimeSynopsis>
 
                   <AnimeActionContainer>
-                    <AnimeActionButton>
-                      <FaPlus />
-                      Add
-                    </AnimeActionButton>
+                    <AddAnime animeId={anime.jikanAnimeId} />
                     <AnimeActionButton
                       onClick={() => navigateToAnime(anime.jikanAnimeId)}
                     >

@@ -5,18 +5,20 @@ import Button from "./Button";
 import Heading from "./Heading";
 import NormalText from "./NormalText";
 import { useForm } from "react-hook-form";
-import { useLoginUser } from "../features/users/useLoginUser";
+import { useRegisterUser } from "../features/users/useRegsiterUser";
 
-const LoginForm = ({ closeModal, setFormType }) => {
-  const { register, formState, handleSubmit } = useForm();
+const RegisterForm = ({ setFormType, closeModal }) => {
+  const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
 
-  const { isLogging, loginUser } = useLoginUser();
+  const { isCreating, addUser } = useRegisterUser();
 
   function onSubmit(data) {
     try {
-      loginUser(data, {
+      console.log(data);
+      addUser(data, {
         onSuccess: () => {
+          reset();
           closeModal();
         },
       });
@@ -27,13 +29,20 @@ const LoginForm = ({ closeModal, setFormType }) => {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Heading as={"h4"}>Welcome back!</Heading>
+      <Heading as={"h4"}>Create an Account</Heading>
+      <FormRowVertical label="Name" error={errors?.name?.message}>
+        <Input
+          type="text"
+          id="name"
+          {...register("name", { required: "Please provide your name" })}
+        />
+      </FormRowVertical>
       <FormRowVertical label="EMAIL" error={errors?.email?.message}>
         <Input
           type="email"
           id="email"
           {...register("email", {
-            required: "This field  sfs sda is required",
+            required: "This field is required",
             pattern: {
               value: /\S+@\S+\.\S+/,
               message: "Please provide a valid email address",
@@ -54,20 +63,32 @@ const LoginForm = ({ closeModal, setFormType }) => {
           })}
         />
       </FormRowVertical>
+      <FormRowVertical
+        label="CONFIRM PASSWORD"
+        error={errors?.confirmPassword?.message}
+      >
+        <Input
+          type="password"
+          id="confirmPassword"
+          {...register("confirmPassword", {
+            required: "This field is required",
+            validate: (value) =>
+              value === getValues().password || "Passwords need to match",
+          })}
+        />
+      </FormRowVertical>
       <FormRowVertical>
-        <Button disabled={isLogging} size="large">
-          Log in
-        </Button>
+        <Button disabled={isCreating}>Register</Button>
       </FormRowVertical>
       <FormRowVertical>
         <p>
-          {"Don't have an account?"}
+          {"Have an account?"}
           <NormalText
-            onClick={() => setFormType("register")}
+            onClick={() => setFormType("login")}
             as={"span"}
             style={{ marginLeft: "0.2rem", color: "#cf9fff" }}
           >
-            Register
+            Login
           </NormalText>
         </p>
       </FormRowVertical>
@@ -75,4 +96,4 @@ const LoginForm = ({ closeModal, setFormType }) => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
